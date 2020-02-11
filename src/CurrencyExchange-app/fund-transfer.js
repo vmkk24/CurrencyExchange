@@ -71,6 +71,7 @@ a{
 </template>
   </paper-listbox>
 </paper-dropdown-menu>
+<paper-input label="Amount in Selected Currency" type="number" value={{amount}} name="amount" required error-message="Please Enter Amount"></paper-input>
   </form>
 </iron-form>
 <iron-ajax id="ajax" handle-as="json" on-response="_handleResponse" 
