@@ -4,6 +4,7 @@ import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-ajax/iron-ajax.js';
 import '@polymer/app-route/app-location.js';
+import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/paper-listbox/paper-listbox.js';
 import '@polymer/paper-item/paper-item.js';
 import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
@@ -81,13 +82,17 @@ a{
 </iron-form>
 <iron-ajax id="ajax" handle-as="json" on-response="_handleResponse" 
 content-type="application/json" on-error="_handleError"></iron-ajax>
+<paper-toast text="Amount Transferred"  class="fit-bottom" id="succesfull"></paper-toast>
+<paper-toast text="Enter Details"  class="fit-bottom" id="error"></paper-toast>
+<paper-toast text="Transaction Failed"  class="fit-bottom" id="fail"></paper-toast>
+
 `;
   }
   static get properties() {
     return {
       currencies: Array,
       action: {
-        type: String, 
+        type: String,
         value: 'List'
       },
       userName: {
@@ -100,38 +105,43 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
       ,
       currency: {
         type: String
+      },
+      data: {
+        type: Array
       }
     };
   }
+  // getting the values of the currencies list 
   connectedCallback() {
     super.connectedCallback();
     this.userName = sessionStorage.getItem('userName');
     this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies`, 'get', null)
   }
-  _handleTransfer(){
+  _handleTransfer() {
     if (this.$.form.validate()) {
-let userId=sessionStorage.getItem('userId')
-let destinationAccountNumber = parseInt(this.shadowRoot.querySelector('#toAccount').value);
-let obj={
-  userId:parseInt(userId),
-  destinationAccountNumber:destinationAccountNumber,
-  transactionAmount:parseInt(this.shadowRoot.querySelector('#amount').value),
-}
-console.log(obj)
-this._makeAjax(`http://10.117.189.177:9090/forexpay/accounts/transactions`, 'post', obj);
-this.action='post'
-// this.set('route.path', './dashboard-page')
+      let userId = sessionStorage.getItem('userId')
+      let destinationAccountNumber = parseInt(this.shadowRoot.querySelector('#toAccount').value);
+      let obj = {
+        userId: parseInt(userId),
+        destinationAccountNumber: destinationAccountNumber,
+        transactionAmount: parseInt(this.shadowRoot.querySelector('#amount').value),
+      }
+      this._makeAjax(`http://10.117.189.177:9090/forexpay/accounts/transactions`, 'post', obj);
+      this.action = 'post'
+      this.set('route.path', './dashboard-page')
+    }else{
+      this.$.error.open();
     }
   }
-  ready(){
+  ready() {
     super.ready();
-    let name =sessionStorage.getItem('userName');
+    let name = sessionStorage.getItem('userName');
     console.log(name)
-    if(name === null) {
+    if (name === null) {
       this.set('route.path', './login-page')
     }
   }
-  _handleDashboard(){
+  _handleDashboard() {
     this.set('route.path', './dashboard-page')
 
   }
@@ -144,34 +154,24 @@ this.action='post'
       case 'Converted':
         this.convertedAmount = event.detail.response;
         break;
-        case 'post':
-          this.convertedAmount = event.detail.response;
-          console.log( this.convertedAmount)
-          break;
+      case 'post':
+        this.data = event.detail.response;
+        this.$.succesfull.open();
+        break;
     }
 
   }
   _handleError() {
+    this.$.fail.open();
   }
   _handleChange() {
     let amount = parseInt(this.shadowRoot.querySelector('#amount').value);
     this.currency = this.shadowRoot.querySelector('#currency').value;
-    console.log(amount,this.currency)
+    console.log(amount, this.currency)
     this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies/exchange?from=INR&to=${this.currency}&amount=${amount}`, 'get', null)
     this.action = 'Converted';
   }
-    // getting response from server and storing user name and id in session storage
-    _handleResponse(event) {
-      switch (this.action) {
-        case 'List':
-          this.currencies = event.detail.response;
-          break;
-        case 'Converted':
-          this.convertedAmount = event.detail.response;
-          console.log( this.convertedAmount )
-          break;
-      }
-    }
+
   // calling main ajax call method 
   _makeAjax(url, method, postObj) {
     let ajax = this.$.ajax;

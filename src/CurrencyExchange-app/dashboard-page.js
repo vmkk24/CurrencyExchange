@@ -83,7 +83,7 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
 </div>
 <h1>Transaction History</h1>
 <table>
-  <tr>rf
+  <tr>
     <th>To Account</th>
     <th>From Account</th>
     <th>Type</th>
