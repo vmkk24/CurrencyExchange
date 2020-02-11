@@ -18,12 +18,12 @@ class FundTransfer extends PolymerElement {
 <style>
   :host {
     display: block;
-
+    
   }
 #buttons{
   position:absolute;
   top:50px;
-  left:1100px;
+  left:900px;
 }
   #form {
     border: 1px solid black;
@@ -58,12 +58,12 @@ a{
 <app-location route={{route}}></app-location>
 <h1>Welcome, {{userName}}</h1>
 <div id="buttons">
-<paper-button raised class="custom indigo">Dashboard</paper-button>
+<paper-button raised class="custom indigo" on-click="_handleDashboard">Dashboard</paper-button>
 <paper-button raised class="custom indigo" on-click="_handleLogout"><a name="login-page" href="[[rootPath]]login-page">Logout</a></paper-button>
 </div>
 <iron-form id="form">
   <form>
-  <paper-input label="To Account" type="text" value={{toAccount}} name="toAccount" maxlength="12" required error-message="Please Enter To account Number"></paper-input>
+  <paper-input label="To Account" type="text" id="toAccount" name="toAccount" maxlength="12" required error-message="Please Enter To account Number"></paper-input>
   <h3>Default Currency : INR </h3>
   <paper-dropdown-menu label="To Currency" id="currency" on-blur="_handleChange">
   <paper-listbox slot="dropdown-content" selected="0">
@@ -76,6 +76,7 @@ a{
 <h2>Amount in Converted Currency : <br>{{convertedAmount.convertedAmount}} {{currency}}</h2><br>
 <h2>Service Tax: {{convertedAmount.serviceTax}} INR</h2><br>
 <h2>Total Amount deducted from your Account: {{convertedAmount.totalAmount}} INR</h2><br>
+<paper-button raised class="custom indigo" on-click="_handleTransfer">Transfer</paper-button>
 </form>
 </iron-form>
 <iron-ajax id="ajax" handle-as="json" on-response="_handleResponse" 
@@ -107,6 +108,19 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     this.userName = sessionStorage.getItem('userName');
     this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies`, 'get', null)
   }
+  _handleTransfer(){
+let userId=sessionStorage.getItem('userId')
+let destinationAccountNumber = parseInt(this.shadowRoot.querySelector('#toAccount').value);
+let obj={
+  userId:parseInt(userId),
+  destinationAccountNumber:destinationAccountNumber,
+  transactionAmount:parseInt(this.shadowRoot.querySelector('#amount').value),
+}
+console.log(obj)
+this._makeAjax(`http://10.117.189.177:9090/forexpay/accounts/transactions`, 'post', obj);
+this.action='post'
+// this.set('route.path', './dashboard-page')
+  }
   ready(){
     super.ready();
     let name =sessionStorage.getItem('userName');
@@ -114,6 +128,10 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     if(name === null) {
       this.set('route.path', './login-page')
     }
+  }
+  _handleDashboard(){
+    this.set('route.path', './dashboard-page')
+
   }
   // getting response from server and storing user name and id in session storage
   _handleResponse(event) {
@@ -124,7 +142,12 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
       case 'Converted':
         this.convertedAmount = event.detail.response;
         break;
+        case 'post':
+          this.convertedAmount = event.detail.response;
+          console.log( this.convertedAmount)
+          break;
     }
+
   }
   _handleError() {
   }

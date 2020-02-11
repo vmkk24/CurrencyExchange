@@ -55,7 +55,6 @@ class UserLogin extends PolymerElement {
     <h2> Please Login</h2>
     <paper-input label="Phone Number" type="text" value={{phone}} name="phone" maxlength="10" required error-message="enter phone number"></paper-input>
     <paper-input label="Password" type="password" value={{password}} name="password" required error-message="enter user name" ></paper-input>
-
     <paper-button raised class="custom indigo" on-click="signIn">Login</paper-button>
   </form>
 </iron-form>
