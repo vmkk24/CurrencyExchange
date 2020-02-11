@@ -9,6 +9,7 @@ import '@polymer/paper-tabs/paper-tabs-icons.js'
 import '@polymer/paper-button/paper-button.js'
 import './login-page.js'
 import './dashboard-page.js'
+import './fund-transfer.js'
 import { setRootPath } from '@polymer/polymer/lib/utils/settings.js'
 /**
 * @customElement
