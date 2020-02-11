@@ -31,11 +31,7 @@ class CurrencyExchangeApp extends PolymerElement {
         :host {
           display: block;
         }
-        h2{
-          text-align:center;
-          
-        }
-
+        
         paper-tabs{
           background-color:lightgreen;
           
@@ -55,16 +51,16 @@ class CurrencyExchangeApp extends PolymerElement {
         
       </style>
       <div>
-      
+   
 
       <app-location route={{route}}></app-location>
     <app-route data="{{routeData}}" route="{{route}}" pattern="[[rootPath]]:page"></app-route>
-        <h2> [[prop1]]!</h2></div>        
+             
         <iron-pages selected={{page}} attr-for-selected="name" role="main">
  
           <dashboard-page name="dashboard-page"></dashboard-page>
           <login-page name="login-page"></login-page>
-
+<fund-transfer name="fund-transfer"></fund-transfer>
 
         </iron-pages>
       
@@ -72,10 +68,7 @@ class CurrencyExchangeApp extends PolymerElement {
   }
   static get properties() {
     return {
-      prop1: {
-        type: String,
-        value: 'Currency login'
-      },
+      
       page: {
         type: String,
         observer: '_changePage'
@@ -142,6 +135,11 @@ class CurrencyExchangeApp extends PolymerElement {
           import('./login-page.js');
           break;
         }
+        case ('fund-transfer'):
+          {
+            import('./fund-transfer.js');
+            break;
+          }
 
     }
 

@@ -1,17 +1,15 @@
 import { html, PolymerElement } from '@polymer/polymer/polymer-element.js';
-
 import '@polymer/iron-form/iron-form.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-ajax/iron-ajax.js';
-
 import '@polymer/app-route/app-location.js';
 
 /**
 * @customElement
 * @polymer
 */
-class Dashboard extends PolymerElement {
+class FundTransfer extends PolymerElement {
     static get template() {
         return html`
 <style>
@@ -49,21 +47,17 @@ class Dashboard extends PolymerElement {
 </style>
 <h1> [[prop1]]</h1>
 <app-location route={{route}}></app-location>
-<paper-button raised class="custom indigo" on-click="signIn">Fund Transfer</paper-button>
-
+<paper-button raised class="custom indigo" on-click="signIn">Dashboard</paper-button>
 <iron-form id="form">
   <form>
  
   </form>
 </iron-form>
-
-
-
 `;
     }
     static get properties() {
         return {
-            prop1: {
+            sfv: {
                 type: String,
                 value: 'Forex Transfer'
             },
@@ -73,4 +67,4 @@ class Dashboard extends PolymerElement {
 
 }
 
-window.customElements.define('dashboard-page', Dashboard);
+window.customElements.define('fund-transfer', FundTransfer);

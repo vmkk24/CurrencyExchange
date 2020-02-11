@@ -4,7 +4,7 @@ import '@polymer/iron-form/iron-form.js';
 import '@polymer/paper-input/paper-input.js';
 import '@polymer/paper-button/paper-button.js';
 import '@polymer/iron-ajax/iron-ajax.js';
-
+import '@polymer/paper-toast/paper-toast.js';
 import '@polymer/app-route/app-location.js';
 
 /**
@@ -25,6 +25,7 @@ class UserLogin extends PolymerElement {
   #form {
     border: 2px solid black;
     width: 500px;
+    border-radius:20px;
     margin-left: 400px;
   }
 
@@ -38,6 +39,8 @@ class UserLogin extends PolymerElement {
   paper-button {
     text-align: center;
     margin-top: 40px;
+    background-color:black;
+    color:white;
     margin-bottom: 40px;
     margin-left: 180px;
   }
@@ -46,7 +49,10 @@ class UserLogin extends PolymerElement {
       padding-bottom:20px;
       padding-top:20px;
   }
-
+  #blankForm {
+    --paper-toast-background-color: black;
+    --paper-toast-color: white;
+  }
 </style>
 <h1> [[prop1]]</h1>
 <app-location route={{route}}></app-location>
@@ -55,15 +61,16 @@ class UserLogin extends PolymerElement {
 
   <form>
     <h2> Login Page </h2>
-    <paper-input label="User Name" type="text" value={{userName}} name="userName" required error-message="enter user name"></paper-input>
+    <paper-input label="Phone Number" type="text" value={{phone}} name="phone" required error-message="enter phone number"></paper-input>
     <paper-input label="Password" type="password" value={{password}} name="password" required error-message="enter user name" ></paper-input>
 
     <paper-button raised class="custom indigo" on-click="signIn">Login</paper-button>
   </form>
 </iron-form>
-
+<paper-toast text="Please Enter All Details"  class="fit-bottom" id="blankForm"></paper-toast>
+<paper-toast text="Wrong Credentials"  class="fit-bottom" id="wrongCredentials"></paper-toast>
 <iron-ajax id="ajax" handle-as="json" on-response="_handleResponse" 
-on-error="_handleError" content-type="application/json"></iron-ajax>
+content-type="application/json" on-error="_handleError"></iron-ajax>
 
 
 `;
@@ -75,33 +82,42 @@ on-error="_handleError" content-type="application/json"></iron-ajax>
                 value: 'Forex Transfer'
             },
             respCheck: Array,
+            details: {
+                type: Object
+            }
         };
     }
 
     // fetching the  user data from josn file 
     signIn() {
-        this.set('route.path','./dashboard-page');
+
         if (this.$.form.validate()) {
-            let userName = this.userName;
-            let pass = this.password;
-            this._makeAjax(`http://localhost:3000/users?name=${userName}&&password=${pass}`, "get", null);
+            let phone = this.phone;
+            let password = this.password;
+            this.details = { mobile: phone, password: password }
+            this._makeAjax(`http://10.117.189.111:9090/forexpay/users`, 'post', this.details);
+        } else {
+            this.$.blankForm.open();
         }
     }
-      _handleResponse(event) {
-        this.respCheck = event.detail.response
-      }
-
     _handleError() {
-        alert('Mobile Number or Password is incorrect');
-      }
+        this.$.wrongCredentials.open();
+    }
+    _handleResponse(event) {
+        this.respCheck = event.detail.response
+        console.log(this.respCheck)
+        sessionStorage.setItem('userName', this.respCheck.userName);
+        sessionStorage.setItem('userId', this.respCheck.userId);
+        this.set('route.path', './dashboard-page')
+    }
 
-      _makeAjax(url, method, postObj) {
+    _makeAjax(url, method, postObj) {
         let ajax = this.$.ajax;
         ajax.method = method;
         ajax.url = url;
         ajax.body = postObj ? JSON.stringify(postObj) : undefined;
         ajax.generateRequest();
-      }
+    }
 
 }
 
