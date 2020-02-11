@@ -17,21 +17,18 @@ class UserLogin extends PolymerElement {
 <style>
   :host {
     display: block;
-    min-height:100vh;
-   background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);    
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
 
   }
 
   #form {
-    border: 2px solid black;
+    border: 1px solid black;
     width: 500px;
     border-radius:20px;
+    padding:8px;
+    margin-top: 100px;
     margin-left: 400px;
-  }
-
-  form {
-    margin-left: 20px;
-    margin-right: 20px;
+    background-color:white;
   }
   h2{
     text-align: center;
@@ -44,23 +41,18 @@ class UserLogin extends PolymerElement {
     margin-bottom: 40px;
     margin-left: 180px;
   }
-  h1{
-      text-align:center;
-      padding-bottom:20px;
-      padding-top:20px;
-  }
   #blankForm {
     --paper-toast-background-color: black;
     --paper-toast-color: white;
   }
 </style>
-<h1> [[prop1]]</h1>
+
 <app-location route={{route}}></app-location>
 
 <iron-form id="form">
 
   <form>
-    <h2> Login Page </h2>
+    <h2> Please Login</h2>
     <paper-input label="Phone Number" type="text" value={{phone}} name="phone" required error-message="enter phone number"></paper-input>
     <paper-input label="Password" type="password" value={{password}} name="password" required error-message="enter user name" ></paper-input>
 

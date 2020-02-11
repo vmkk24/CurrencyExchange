@@ -9,7 +9,20 @@
 
     <!-- See https://goo.gl/OOhYW5 -->
     <link rel="manifest" href="manifest.json">
-
+<style>
+  h2{
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  header{
+    background-color: black;
+    color: blanchedalmond;
+    padding: 20px;
+    border-radius:20px;
+  }
+  body{
+    background-image: url('wall.png');
+  }
+</style>
     <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script>
       window.MyAppGlobals={rootPath:'/'};
@@ -20,6 +33,9 @@
 
   </head>
   <body>
+    <header>
+      <h2>Forex Transfer</h2>
+    </header>
 <currency-exchange></currency-exchange>
   </body>
 </html>
