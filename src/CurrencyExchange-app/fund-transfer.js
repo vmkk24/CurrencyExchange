@@ -18,20 +18,21 @@ class FundTransfer extends PolymerElement {
 <style>
   :host {
     display: block;
-    min-height:100vh;
-   background: linear-gradient(to right, #91EAE4, #86A8E7, #7F7FD5);    
 
   }
-
+#buttons{
+  position:absolute;
+  top:50px;
+  left:1100px;
+}
   #form {
-    border: 2px solid black;
+    border: 1px solid black;
     width: 500px;
+    border-radius:20px;
+    padding:8px;
+    margin-top: 50px;
     margin-left: 400px;
-  }
-
-  form {
-    margin-left: 20px;
-    margin-right: 20px;
+    background-color:white;
   }
   h2{
     text-align: center;
@@ -43,21 +44,27 @@ class FundTransfer extends PolymerElement {
   }
   h1{
       text-align:center;
-      padding-bottom:20px;
-      padding-top:20px;
+      color:white;
+      position:absolute;
+      top:19px;
+      left:300px;
+  
   }
 a{
   text-decoration:none;
   color:white;
 }
 </style>
-<h1> [[prop1]]</h1>
 <app-location route={{route}}></app-location>
-<paper-button raised class="custom indigo" on-click="signIn">Dashboard</paper-button>
+<h1>Welcome, {{userName}}</h1>
+<div id="buttons">
+<paper-button raised class="custom indigo">Dashboard</paper-button>
 <paper-button raised class="custom indigo" on-click="_handleLogout"><a name="login-page" href="[[rootPath]]login-page">Logout</a></paper-button>
+</div>
 <iron-form id="form">
   <form>
-  <paper-dropdown-menu label="Currency">
+  <paper-input label="To Account" type="text" value={{toAccount}} name="toAccount" required error-message="Please Enter To account Number"></paper-input>
+  <paper-dropdown-menu label="To Currency">
   <paper-listbox slot="dropdown-content" selected="0">
   <template is="dom-repeat" items={{currencies}}>
     <paper-item>{{item.currencyName}}</paper-item>
@@ -72,22 +79,24 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     }
     static get properties() {
         return {
-            sfv: {
-                type: String,
-                value: 'Forex Transfer'
-            },
             currencies: Array,
+            userName:{
+              type:String,
+              value:sessionStorage.getItem('userName')
+            }
         };
     }
     connectedCallback(){
       super.connectedCallback();
+      this.userName = sessionStorage.getItem('userName');
       this._makeAjax(`http://10.117.189.111:9090/forexpay/currencies`,'get',null)
     }
     // getting response from server and storing user name and id in session storage
     _handleResponse(event) {
         this.currencies = event.detail.response;
-        console.log(this.currencies)
     }
+    _handleError() {
+  }
       // calling main ajax call method 
     _makeAjax(url, method, postObj) {
         let ajax = this.$.ajax;

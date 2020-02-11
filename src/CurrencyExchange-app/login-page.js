@@ -101,10 +101,9 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     // getting response from server and storing user name and id in session storage
     _handleResponse(event) {
         this.respCheck = event.detail.response
-        console.log(this.respCheck)
         sessionStorage.setItem('userName', this.respCheck.userName);
         sessionStorage.setItem('userId', this.respCheck.userId);
-        this.$.form.clear();
+        this.$.form.reset();
         this.set('route.path', './fund-transfer')
     }
       // calling main ajax call method 
