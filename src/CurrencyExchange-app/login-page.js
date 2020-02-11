@@ -88,7 +88,7 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
         };
     }
 
-    // fetching the  user data from josn file 
+    // fetching the user data from database and validating the phone number and password
     signIn() {
 
         if (this.$.form.validate()) {
@@ -100,17 +100,22 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
             this.$.blankForm.open();
         }
     }
+
+    // handling error if encounter error from backend server
     _handleError() {
         this.$.wrongCredentials.open();
     }
+
+    // getting response from server and storing user name and id in session storage
     _handleResponse(event) {
         this.respCheck = event.detail.response
         console.log(this.respCheck)
         sessionStorage.setItem('userName', this.respCheck.userName);
         sessionStorage.setItem('userId', this.respCheck.userId);
-        this.set('route.path', './dashboard-page')
+        this.$.form.clear();
+        this.set('route.path', './fund-transfer')
     }
-
+      // calling main ajax call method 
     _makeAjax(url, method, postObj) {
         let ajax = this.$.ajax;
         ajax.method = method;
