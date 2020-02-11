@@ -16,15 +16,22 @@ class Dashboard extends PolymerElement {
 <style>
   :host {
     display: block; 
-
   }
-table{
-  padding:30px;
-  border:1px dotted black;
-}
-tr{
-  padding:30px;
-}
+  table, td, th {  
+    border: 1px solid rgb(0, 0, 0);
+    text-align: left;
+    border-style: dashed;
+  }
+  
+  table {
+    border-collapse: collapse;
+    margin-top:50px;
+    width: 90%;
+  }
+  
+  th, td {
+    padding: 15px;
+  }
   #form {
     border: 2px solid black;
     width: 500px;
@@ -47,7 +54,7 @@ tr{
     text-align:center;
     color:white;
     position:absolute;
-    top:19px;
+    top:22px;
     left:300px;
 
 }
@@ -74,8 +81,9 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
 <paper-button raised class="custom indigo" on-click="_handleTransfer">Transfer</paper-button>
 <paper-button raised class="custom indigo" on-click="_handleLogout"><a name="login-page" href="[[rootPath]]login-page">Logout</a></paper-button>
 </div>
+<h1>Transaction History</h1>
 <table>
-  <tr>
+  <tr>rf
     <th>To Account</th>
     <th>From Account</th>
     <th>Type</th>
@@ -107,6 +115,10 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
             prop1: {
                 type: String,
                 value: 'Forex Transfer'
+            },
+            userName: {
+              type: String,
+              value: sessionStorage.getItem('userName')
             }, action: {
               type: String, 
               value: 'List'
@@ -117,6 +129,7 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     connectedCallback() {
       super.connectedCallback();
     let userId = sessionStorage.getItem('userId');
+    this.userName = sessionStorage.getItem('userName');
       this._makeAjax(`http://10.117.189.177:9090/forexpay/users/${userId}/transactions`, 'get', null)
     }
      // calling main ajax call method 

@@ -23,7 +23,7 @@ class FundTransfer extends PolymerElement {
 #buttons{
   position:absolute;
   top:50px;
-  left:900px;
+  left:1000px;
 }
   #form {
     border: 1px solid black;
@@ -65,7 +65,7 @@ a{
   <form>
   <paper-input label="To Account" type="text" id="toAccount" name="toAccount" maxlength="12" required error-message="Please Enter To account Number"></paper-input>
   <h3>Default Currency : INR </h3>
-  <paper-dropdown-menu label="To Currency" id="currency" on-blur="_handleChange">
+  <paper-dropdown-menu label="To Currency" required id="currency" on-blur="_handleChange">
   <paper-listbox slot="dropdown-content" selected="0">
   <template is="dom-repeat" items={{currencies}}>
     <paper-item>{{item.code}}</paper-item>
@@ -109,6 +109,7 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
     this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies`, 'get', null)
   }
   _handleTransfer(){
+    if (this.$.form.validate()) {
 let userId=sessionStorage.getItem('userId')
 let destinationAccountNumber = parseInt(this.shadowRoot.querySelector('#toAccount').value);
 let obj={
@@ -120,6 +121,7 @@ console.log(obj)
 this._makeAjax(`http://10.117.189.177:9090/forexpay/accounts/transactions`, 'post', obj);
 this.action='post'
 // this.set('route.path', './dashboard-page')
+    }
   }
   ready(){
     super.ready();
