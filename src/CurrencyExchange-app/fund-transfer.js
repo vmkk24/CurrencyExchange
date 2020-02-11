@@ -13,8 +13,8 @@ import '@polymer/paper-dropdown-menu/paper-dropdown-menu.js';
 * @polymer
 */
 class FundTransfer extends PolymerElement {
-    static get template() {
-        return html`
+  static get template() {
+    return html`
 <style>
   :host {
     display: block;
@@ -29,8 +29,8 @@ class FundTransfer extends PolymerElement {
     border: 1px solid black;
     width: 500px;
     border-radius:20px;
-    padding:8px;
-    margin-top: 50px;
+    padding:18px;
+    margin-top: 30px;
     margin-left: 400px;
     background-color:white;
   }
@@ -63,52 +63,101 @@ a{
 </div>
 <iron-form id="form">
   <form>
-  <paper-input label="To Account" type="text" value={{toAccount}} name="toAccount" required error-message="Please Enter To account Number"></paper-input>
-  <paper-dropdown-menu label="To Currency">
+  <paper-input label="To Account" type="text" value={{toAccount}} name="toAccount" maxlength="12" required error-message="Please Enter To account Number"></paper-input>
+  <h3>Default Currency : INR </h3>
+  <paper-dropdown-menu label="To Currency" id="currency" on-blur="_handleChange">
   <paper-listbox slot="dropdown-content" selected="0">
   <template is="dom-repeat" items={{currencies}}>
-    <paper-item>{{item.currencyName}}</paper-item>
+    <paper-item>{{item.code}}</paper-item>
 </template>
   </paper-listbox>
 </paper-dropdown-menu>
-<paper-input label="Amount in Selected Currency" type="number" value={{amount}} name="amount" required error-message="Please Enter Amount"></paper-input>
-  </form>
+<paper-input label="Amount in INR" type="number"  on-blur="_handleChange" id="amount" name="amount" required error-message="Please Enter Amount"></paper-input>
+<h2>Amount in Converted Currency : <br>{{convertedAmount.convertedAmount}} {{currency}}</h2><br>
+<h2>Service Tax: {{convertedAmount.serviceTax}} INR</h2><br>
+<h2>Total Amount deducted from your Account: {{convertedAmount.totalAmount}} INR</h2><br>
+</form>
 </iron-form>
 <iron-ajax id="ajax" handle-as="json" on-response="_handleResponse" 
 content-type="application/json" on-error="_handleError"></iron-ajax>
 `;
+  }
+  static get properties() {
+    return {
+      currencies: Array,
+      action: {
+        type: String, 
+        value: 'List'
+      },
+      userName: {
+        type: String,
+        value: sessionStorage.getItem('userName')
+      },
+      convertedAmount: {
+        type: Object
+      }
+      ,
+      currency: {
+        type: String
+      }
+    };
+  }
+  connectedCallback() {
+    super.connectedCallback();
+    this.userName = sessionStorage.getItem('userName');
+    this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies`, 'get', null)
+  }
+  ready(){
+    super.ready();
+    let name =sessionStorage.getItem('userName');
+    console.log(name)
+    if(name === null) {
+      this.set('route.path', './login-page')
     }
-    static get properties() {
-        return {
-            currencies: Array,
-            userName:{
-              type:String,
-              value:sessionStorage.getItem('userName')
-            }
-        };
+  }
+  // getting response from server and storing user name and id in session storage
+  _handleResponse(event) {
+    switch (this.action) {
+      case 'List':
+        this.currencies = event.detail.response;
+        break;
+      case 'Converted':
+        this.convertedAmount = event.detail.response;
+        break;
     }
-    connectedCallback(){
-      super.connectedCallback();
-      this.userName = sessionStorage.getItem('userName');
-      this._makeAjax(`http://10.117.189.111:9090/forexpay/currencies`,'get',null)
-    }
+  }
+  _handleError() {
+  }
+  _handleChange() {
+    let amount = parseInt(this.shadowRoot.querySelector('#amount').value);
+    this.currency = this.shadowRoot.querySelector('#currency').value;
+    console.log(amount,this.currency)
+    this._makeAjax(`http://10.117.189.177:9090/forexpay/currencies/exchange?from=INR&to=${this.currency}&amount=${amount}`, 'get', null)
+    this.action = 'Converted';
+  }
     // getting response from server and storing user name and id in session storage
     _handleResponse(event) {
-        this.currencies = event.detail.response;
+      switch (this.action) {
+        case 'List':
+          this.currencies = event.detail.response;
+          break;
+        case 'Converted':
+          this.convertedAmount = event.detail.response;
+          console.log( this.convertedAmount )
+          break;
+      }
     }
-    _handleError() {
+  // calling main ajax call method 
+  _makeAjax(url, method, postObj) {
+    let ajax = this.$.ajax;
+    ajax.method = method;
+    ajax.url = url;
+    ajax.body = postObj ? JSON.stringify(postObj) : undefined;
+    ajax.generateRequest();
   }
-      // calling main ajax call method 
-    _makeAjax(url, method, postObj) {
-        let ajax = this.$.ajax;
-        ajax.method = method;
-        ajax.url = url;
-        ajax.body = postObj ? JSON.stringify(postObj) : undefined;
-        ajax.generateRequest();
-    }
-    _handleLogout(){
-      sessionStorage.clear();
-    }
+  _handleLogout() {
+    sessionStorage.clear();
+  }
 
 }
 

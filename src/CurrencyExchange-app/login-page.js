@@ -12,8 +12,8 @@ import '@polymer/app-route/app-location.js';
 * @polymer
 */
 class UserLogin extends PolymerElement {
-    static get template() {
-        return html`
+  static get template() {
+    return html`
 <style>
   :host {
     display: block;
@@ -53,7 +53,7 @@ class UserLogin extends PolymerElement {
 
   <form>
     <h2> Please Login</h2>
-    <paper-input label="Phone Number" type="number" value={{phone}} name="phone" required error-message="enter phone number"></paper-input>
+    <paper-input label="Phone Number" type="text" value={{phone}} name="phone" maxlength="10" required error-message="enter phone number"></paper-input>
     <paper-input label="Password" type="password" value={{password}} name="password" required error-message="enter user name" ></paper-input>
 
     <paper-button raised class="custom indigo" on-click="signIn">Login</paper-button>
@@ -66,54 +66,54 @@ content-type="application/json" on-error="_handleError"></iron-ajax>
 
 
 `;
-    }
-    static get properties() {
-        return {
-            prop1: {
-                type: String,
-                value: 'Forex Transfer'
-            },
-            respCheck: Array,
-            details: {
-                type: Object
-            }
-        };
-    }
+  }
+  static get properties() {
+    return {
+      prop1: {
+        type: String,
+        value: 'Forex Transfer'
+      },
+      respCheck: Array,
+      details: {
+        type: Object
+      }
+    };
+  }
 
-    // fetching the user data from database and validating the phone number and password
-    signIn() {
+  // fetching the user data from database and validating the phone number and password
+  signIn() {
 
-        if (this.$.form.validate()) {
-            let phone = this.phone;
-            let password = this.password;
-            this.details = { mobile: phone, password: password }
-            this._makeAjax(`http://10.117.189.111:9090/forexpay/users`, 'post', this.details);
-        } else {
-            this.$.blankForm.open();
-        }
+    if (this.$.form.validate()) {
+      let phone = this.phone;
+      let password = this.password;
+      this.details = { mobile: phone, password: password }
+      this._makeAjax(`http://10.117.189.177:9090/forexpay/users`, 'post', this.details);
+    } else {
+      this.$.blankForm.open();
     }
+  }
 
-    // handling error if encounter error from backend server
-    _handleError() {
-        this.$.wrongCredentials.open();
-    }
+  // handling error if encounter error from backend server
+  _handleError() {
+    this.$.wrongCredentials.open();
+  }
 
-    // getting response from server and storing user name and id in session storage
-    _handleResponse(event) {
-        this.respCheck = event.detail.response
-        sessionStorage.setItem('userName', this.respCheck.userName);
-        sessionStorage.setItem('userId', this.respCheck.userId);
-        this.$.form.reset();
-        this.set('route.path', './fund-transfer')
-    }
-      // calling main ajax call method 
-    _makeAjax(url, method, postObj) {
-        let ajax = this.$.ajax;
-        ajax.method = method;
-        ajax.url = url;
-        ajax.body = postObj ? JSON.stringify(postObj) : undefined;
-        ajax.generateRequest();
-    }
+  // getting response from server and storing user name and id in session storage
+  _handleResponse(event) {
+    this.respCheck = event.detail.response
+    sessionStorage.setItem('userName', this.respCheck.userName);
+    sessionStorage.setItem('userId', this.respCheck.userId);
+    this.$.form.reset();
+    this.set('route.path', './fund-transfer')
+  }
+  // calling main ajax call method 
+  _makeAjax(url, method, postObj) {
+    let ajax = this.$.ajax;
+    ajax.method = method;
+    ajax.url = url;
+    ajax.body = postObj ? JSON.stringify(postObj) : undefined;
+    ajax.generateRequest();
+  }
 
 }
 
